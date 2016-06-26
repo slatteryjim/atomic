@@ -56,3 +56,39 @@ func TestTime(t *testing.T) {
 	var x Time
 	Ω(x.Val().Nanosecond()).Should(Equal(0))
 }
+
+func TestBool(t *testing.T) {
+	RegisterTestingT(t) // for Gomega matchers
+
+	// Create with initial value
+	Ω(NewBool(true).Val()).Should(Equal(true))
+	Ω(NewBool(false).Val()).Should(Equal(false))
+
+	// Set different value
+	b := NewBool(true)
+	b.Set(false)
+	Ω(b.Val()).Should(Equal(false))
+
+	b.Set(true)
+	Ω(b.Val()).Should(Equal(true))
+
+	// zero value supported
+	var x Bool
+	Ω(x.Val()).Should(Equal(false))
+}
+
+func TestMap(t *testing.T) {
+	RegisterTestingT(t) // for Gomega matchers
+
+	b := NewMap()
+	b.Set("test", true)
+	Ω(b.Get("test")).Should(Equal(true))
+
+	b.Set(123, false)
+	Ω(b.Get(123)).Should(Equal(false))
+
+	b.Del(123)
+	Ω(b.Get(123)).Should(BeNil())
+
+	Ω(b.Get(456)).Should(BeNil())
+}
