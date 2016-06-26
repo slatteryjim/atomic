@@ -2,6 +2,8 @@ package atomic
 
 import (
 	"testing"
+	"time"
+
 	. "github.com/onsi/gomega"
 )
 
@@ -29,4 +31,28 @@ func TestInt32(t *testing.T) {
 	var x Int32
 	Ω(x.Val()).Should(Equal(int32(0)))
 
+}
+
+func TestTime(t *testing.T) {
+	RegisterTestingT(t) // for Gomega matchers
+
+	now := time.Now()
+	earlier := now.Add(-5 * time.Minute)
+	Ω(now).ShouldNot(Equal(earlier))
+
+	// create new Time instance with initial value
+	at := NewTime(now)
+	Ω(at.Val()).Should(Equal(now))
+
+	// Set a different value
+	at.Set(earlier)
+	Ω(at.Val()).Should(Equal(earlier))
+
+	// atomically add 3 seconds to the time
+	at.Alter(func(old time.Time) time.Time { return old.Add(3 * time.Second) })
+	Ω(at.Val().Sub(earlier)).Should(Equal(3 * time.Second))
+
+	// zero value supported
+	var x Time
+	Ω(x.Val().Nanosecond()).Should(Equal(0))
 }

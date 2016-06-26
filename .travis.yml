@@ -3,6 +3,9 @@ language: go
 go:
   - tip
 
-script:
+before_script:
+  - if [[ -n $(make fmt) ]]; then echo "Please run 'make fmt' on your code." && exit 1; fi
   - make depend
+
+script:
   - make test
