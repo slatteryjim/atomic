@@ -40,6 +40,69 @@ func (ai *Int32) Swap(newValue int32) int32 {
 }
 
 //-----------------------------------------------------------------------------
+// Int64
+//-----------------------------------------------------------------------------
+
+// Int64 stores an int64 value and allows it to be read and modified atomically.
+type Int64 struct {
+	val int64
+}
+
+func NewInt64(initialValue int64) *Int64 {
+	return &Int64{initialValue}
+}
+
+// Add atomically adds the given delta to the stored value.
+func (ai *Int64) Add(delta int64) int64 {
+	return atomic.AddInt64(&ai.val, delta)
+}
+
+// Val safely returns the stored value.
+func (ai *Int64) Val() int64 {
+	return atomic.LoadInt64(&ai.val)
+}
+
+// Set safely sets the stored value.
+func (ai *Int64) Set(newValue int64) {
+	atomic.StoreInt64(&ai.val, newValue)
+}
+
+// Swap safely swaps the stored value and returns the old value
+func (ai *Int64) Swap(newValue int64) int64 {
+	return atomic.SwapInt64(&ai.val, newValue)
+}
+
+//-----------------------------------------------------------------------------
+// String
+//-----------------------------------------------------------------------------
+
+// String stores a string and allows it to be read and modified atomically.
+type String struct {
+	val string
+	mu  sync.RWMutex
+}
+
+func NewString(initialValue string) *String {
+	return &String{val: initialValue}
+}
+
+// Set safely sets the stored value.
+func (at *String) Set(newValue string) {
+	at.mu.Lock()
+	defer at.mu.Unlock()
+
+	at.val = newValue
+}
+
+// Val safely returns the stored value.
+func (at *String) Val() string {
+	at.mu.RLock()
+	defer at.mu.RUnlock()
+
+	return at.val
+}
+
+//-----------------------------------------------------------------------------
 // Time
 //-----------------------------------------------------------------------------
 
@@ -74,6 +137,36 @@ func (at *Time) Val() time.Time {
 // Set safely sets the stored value.
 func (at *Time) Set(newValue time.Time) {
 	at.Alter(func(_ time.Time) time.Time { return newValue })
+}
+
+//-----------------------------------------------------------------------------
+// Duration
+//-----------------------------------------------------------------------------
+
+// Duration stores a time.Duration and allows it to be read and modified atomically.
+type Duration struct {
+	val time.Duration
+	mu  sync.RWMutex
+}
+
+func NewDuration(initialValue time.Duration) *Duration {
+	return &Duration{val: initialValue}
+}
+
+// Set safely sets the stored value.
+func (at *Duration) Set(newValue time.Duration) {
+	at.mu.Lock()
+	defer at.mu.Unlock()
+
+	at.val = newValue
+}
+
+// Val safely returns the stored value.
+func (at *Duration) Val() time.Duration {
+	at.mu.RLock()
+	defer at.mu.RUnlock()
+
+	return at.val
 }
 
 //-----------------------------------------------------------------------------

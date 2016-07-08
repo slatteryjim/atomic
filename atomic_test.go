@@ -30,7 +30,47 @@ func TestInt32(t *testing.T) {
 	// zero value supported
 	var x Int32
 	Ω(x.Val()).Should(Equal(int32(0)))
+}
 
+func TestInt64(t *testing.T) {
+	RegisterTestingT(t) // for Gomega matchers
+
+	// create new Int64 instance with initial value
+	ai := NewInt64(int64(1))
+	Ω(ai.Val()).Should(Equal(int64(1)))
+
+	// atomically add 1
+	ai.Add(int64(1))
+	Ω(ai.Val()).Should(Equal(int64(2)))
+
+	// atomically set value back to 1
+	ai.Set(int64(1))
+	Ω(ai.Val()).Should(Equal(int64(1)))
+
+	// atomically swap value to 2
+	oldValue := ai.Swap(int64(2))
+	Ω(oldValue).Should(Equal(int64(1)))
+	Ω(ai.Val()).Should(Equal(int64(2)))
+
+	// zero value supported
+	var x Int64
+	Ω(x.Val()).Should(Equal(int64(0)))
+}
+
+func TestString(t *testing.T) {
+	RegisterTestingT(t) // for Gomega matchers
+
+	// create new String instance with initial value
+	as := NewString("foo")
+	Ω(as.Val()).Should(Equal("foo"))
+
+	// atomically set value
+	as.Set("bar")
+	Ω(as.Val()).Should(Equal("bar"))
+
+	// zero value supported
+	var x String
+	Ω(x.Val()).Should(Equal(""))
 }
 
 func TestTime(t *testing.T) {
@@ -55,6 +95,22 @@ func TestTime(t *testing.T) {
 	// zero value supported
 	var x Time
 	Ω(x.Val().Nanosecond()).Should(Equal(0))
+}
+
+func TestDuration(t *testing.T) {
+	RegisterTestingT(t) // for Gomega matchers
+
+	// create new Duration instance with initial value
+	ad := NewDuration(1 * time.Second)
+	Ω(ad.Val()).Should(Equal(1 * time.Second))
+
+	// atomically set value
+	ad.Set(2 * time.Second)
+	Ω(ad.Val()).Should(Equal(2 * time.Second))
+
+	// zero value supported
+	var x Duration
+	Ω(x.Val()).Should(Equal(0 * time.Second))
 }
 
 func TestBool(t *testing.T) {
