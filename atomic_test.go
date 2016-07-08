@@ -57,6 +57,31 @@ func TestInt64(t *testing.T) {
 	Ω(x.Val()).Should(Equal(int64(0)))
 }
 
+func TestUint64(t *testing.T) {
+	RegisterTestingT(t) // for Gomega matchers
+
+	// create new Uint64 instance with initial value
+	ai := NewUint64(uint64(1))
+	Ω(ai.Val()).Should(Equal(uint64(1)))
+
+	// atomically add 1
+	ai.Add(uint64(1))
+	Ω(ai.Val()).Should(Equal(uint64(2)))
+
+	// atomically set value back to 1
+	ai.Set(uint64(1))
+	Ω(ai.Val()).Should(Equal(uint64(1)))
+
+	// atomically swap value to 2
+	oldValue := ai.Swap(uint64(2))
+	Ω(oldValue).Should(Equal(uint64(1)))
+	Ω(ai.Val()).Should(Equal(uint64(2)))
+
+	// zero value supported
+	var x Uint64
+	Ω(x.Val()).Should(Equal(uint64(0)))
+}
+
 func TestString(t *testing.T) {
 	RegisterTestingT(t) // for Gomega matchers
 

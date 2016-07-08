@@ -73,6 +73,39 @@ func (ai *Int64) Swap(newValue int64) int64 {
 }
 
 //-----------------------------------------------------------------------------
+// Uint64
+//-----------------------------------------------------------------------------
+
+// Uint64 stores a uint64 value and allows it to be read and modified atomically.
+type Uint64 struct {
+	val uint64
+}
+
+func NewUint64(initialValue uint64) *Uint64 {
+	return &Uint64{initialValue}
+}
+
+// Add atomically adds the given delta to the stored value.
+func (ai *Uint64) Add(delta uint64) uint64 {
+	return atomic.AddUint64(&ai.val, delta)
+}
+
+// Val safely returns the stored value.
+func (ai *Uint64) Val() uint64 {
+	return atomic.LoadUint64(&ai.val)
+}
+
+// Set safely sets the stored value.
+func (ai *Uint64) Set(newValue uint64) {
+	atomic.StoreUint64(&ai.val, newValue)
+}
+
+// Swap safely swaps the stored value and returns the old value
+func (ai *Uint64) Swap(newValue uint64) uint64 {
+	return atomic.SwapUint64(&ai.val, newValue)
+}
+
+//-----------------------------------------------------------------------------
 // String
 //-----------------------------------------------------------------------------
 
