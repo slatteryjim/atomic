@@ -68,6 +68,11 @@ func TestString(t *testing.T) {
 	as.Set("bar")
 	Ω(as.Val()).Should(Equal("bar"))
 
+	// atomically swap value to "foobar"
+	oldValue := as.Swap("foobar")
+	Ω(oldValue).Should(Equal("bar"))
+	Ω(as.Val()).Should(Equal("foobar"))
+
 	// zero value supported
 	var x String
 	Ω(x.Val()).Should(Equal(""))
@@ -92,6 +97,11 @@ func TestTime(t *testing.T) {
 	at.Alter(func(old time.Time) time.Time { return old.Add(3 * time.Second) })
 	Ω(at.Val().Sub(earlier)).Should(Equal(3 * time.Second))
 
+	// atomically swap value back to earlier
+	oldValue := at.Swap(earlier)
+	Ω(oldValue.Sub(earlier)).Should(Equal(3 * time.Second))
+	Ω(at.Val()).Should(Equal(earlier))
+
 	// zero value supported
 	var x Time
 	Ω(x.Val().Nanosecond()).Should(Equal(0))
@@ -107,6 +117,11 @@ func TestDuration(t *testing.T) {
 	// atomically set value
 	ad.Set(2 * time.Second)
 	Ω(ad.Val()).Should(Equal(2 * time.Second))
+
+	// atomically swap value
+	oldValue := ad.Swap(3 * time.Second)
+	Ω(oldValue).Should(Equal(2 * time.Second))
+	Ω(ad.Val()).Should(Equal(3 * time.Second))
 
 	// zero value supported
 	var x Duration
@@ -127,6 +142,11 @@ func TestBool(t *testing.T) {
 
 	b.Set(true)
 	Ω(b.Val()).Should(Equal(true))
+
+	// atomically swap value
+	oldValue := b.Swap(false)
+	Ω(oldValue).Should(Equal(true))
+	Ω(b.Val()).Should(Equal(false))
 
 	// zero value supported
 	var x Bool

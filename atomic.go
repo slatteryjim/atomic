@@ -102,6 +102,17 @@ func (at *String) Val() string {
 	return at.val
 }
 
+// Swap safely swaps the stored value and returns the old value
+func (at *String) Swap(newValue string) string {
+	at.mu.Lock()
+	defer at.mu.Unlock()
+
+	oldVal := at.val
+	at.val = newValue
+
+	return oldVal
+}
+
 //-----------------------------------------------------------------------------
 // Time
 //-----------------------------------------------------------------------------
@@ -139,6 +150,17 @@ func (at *Time) Set(newValue time.Time) {
 	at.Alter(func(_ time.Time) time.Time { return newValue })
 }
 
+// Swap safely swaps the stored value and returns the old value
+func (at *Time) Swap(newValue time.Time) time.Time {
+	at.mu.Lock()
+	defer at.mu.Unlock()
+
+	oldVal := at.val
+	at.val = newValue
+
+	return oldVal
+}
+
 //-----------------------------------------------------------------------------
 // Duration
 //-----------------------------------------------------------------------------
@@ -167,6 +189,17 @@ func (at *Duration) Val() time.Duration {
 	defer at.mu.RUnlock()
 
 	return at.val
+}
+
+// Swap safely swaps the stored value and returns the old value
+func (at *Duration) Swap(newValue time.Duration) time.Duration {
+	at.mu.Lock()
+	defer at.mu.Unlock()
+
+	oldVal := at.val
+	at.val = newValue
+
+	return oldVal
 }
 
 //-----------------------------------------------------------------------------
@@ -215,6 +248,17 @@ func (ab *Bool) ValWithCallback(callback func(curVal bool) error) error {
 	defer ab.mu.RUnlock()
 
 	return callback(ab.val)
+}
+
+// Swap safely swaps the stored value and returns the old value
+func (ab *Bool) Swap(newValue bool) bool {
+	ab.mu.Lock()
+	defer ab.mu.Unlock()
+
+	oldVal := ab.val
+	ab.val = newValue
+
+	return oldVal
 }
 
 // Allow a read-only Bool to exist
