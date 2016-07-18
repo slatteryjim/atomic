@@ -77,6 +77,14 @@ func TestUint64(t *testing.T) {
 	Ω(oldValue).Should(Equal(uint64(1)))
 	Ω(ai.Val()).Should(Equal(uint64(2)))
 
+	// atomically compares & swaps if the old value matches
+	swapped := ai.CompareAndSwap(uint64(1), uint64(2))
+	Ω(swapped).Should(BeFalse())
+
+	swapped = ai.CompareAndSwap(uint64(2), uint64(1))
+	Ω(swapped).Should(BeTrue())
+	Ω(ai.Val()).Should(Equal(uint64(1)))
+
 	// zero value supported
 	var x Uint64
 	Ω(x.Val()).Should(Equal(uint64(0)))
