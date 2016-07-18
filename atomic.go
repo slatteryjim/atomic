@@ -105,6 +105,11 @@ func (ai *Uint64) Swap(newValue uint64) uint64 {
 	return atomic.SwapUint64(&ai.val, newValue)
 }
 
+// Executes the compare-and-swap operation
+func (ai *Uint64) CompareAndSwap(old, new uint64) bool {
+	return atomic.CompareAndSwapUint64(&ai.val, old, new)
+}
+
 //-----------------------------------------------------------------------------
 // String
 //-----------------------------------------------------------------------------
